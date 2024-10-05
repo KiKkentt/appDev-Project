@@ -20,4 +20,4 @@ function addUser(user){
     fs.writeFileSync(usersFPath, JSON.stringify(users, null, 2));
 }
 
-module.exports = {findUserByName, addUser};
+module.exports = { findUserByName, addUser };
