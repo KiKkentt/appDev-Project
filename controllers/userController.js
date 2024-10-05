@@ -1,4 +1,8 @@
 const {findUserByName, addUser} = require('../models/userModel'); // get data from mock database
+const jwt = require('jsonwebtoken');
+
+// Secret key for the token
+const jwt_secret = 'testKey'; // dummy key for now
 
 // POST /register
 function register(req, res){
@@ -30,7 +34,13 @@ function login(req, res) {
         return res.status(401).json({message: 'Invalid username or password'});
     }// Check password and if user exists
 
-    return res.status(200).json({message: 'Login successful', user}); // user is there para debug sa
+
+
+
+    const token = jwt.sign({id: user.id, username: user.username}, jwt_secret, {expiresIn: '1h'});
+
+
+    return res.status(200).json({message: 'Login successful', token}); // user is there para debug sa
 }
 
 module.exports = {register, login};
