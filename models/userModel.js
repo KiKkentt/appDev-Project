@@ -15,7 +15,7 @@ function findUserByName(username){
 
 function addUser(user){
     const users = getUsers();
-    user.id = users.length + 5;
+    user.id = users.length + 100;
     users.push(user);
     fs.writeFileSync(usersFPath, JSON.stringify(users, null, 2));
 }
