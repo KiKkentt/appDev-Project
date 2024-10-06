@@ -1,11 +1,29 @@
 const {findUserByName, addUser} = require('../models/userModel'); // get data from mock database
 const jwt = require('jsonwebtoken');
+const Joi = require('joi');
+
 
 // Secret key for the token
 const jwt_secret = 'testKey'; // dummy key for now
 
+//Joi schemas for validation
+const registerSchema = Joi.object({
+  username: Joi.string().min(3).required(),
+  password: Joi.string().min(6).required(),
+  email: Joi.string().email().required(),
+});
+const loginSchema = Joi.object({
+  username: Joi.string().min(3).required(),
+  password: Joi.string().min(6).required(),
+});
+
+
+
 // POST /register
 function register(req, res){
+    const { error } = registerSchema.validate(req.body);
+    if (error) return res.status(400).json({ message: error.details[0].message });
+
     const {username, password, email} = req.body;
 
     if (!username || !password || !email){
@@ -27,6 +45,9 @@ function register(req, res){
 
 // POST /login
 function login(req, res) {
+    const { error } = loginSchema.validate(req.body);
+    if (error) return res.status(400).json({ message: error.details[0].message });  
+
     const {username, password} = req.body;
     const user = findUserByName(username);
 
@@ -35,8 +56,7 @@ function login(req, res) {
     }// Check password and if user exists
 
 
-
-
+    // Generate JWT token along with user ID & username
     const token = jwt.sign({id: user.id, username: user.username}, jwt_secret, {expiresIn: '1h'});
 
 

@@ -16,7 +16,9 @@ router.post('/login', login);
 
 // Protected profile pathroute
 router.get('/profile', authenticateToken, (req, res) => {
-  res.json({ message: 'Profile info', user: req.user });
+  res.json({ 
+    message: 'Profile info', user: req.user 
+  });
 });
 
 
