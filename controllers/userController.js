@@ -9,12 +9,12 @@ const jwt_secret = 'testKey'; // dummy key for now
 //Joi schemas for validation
 const registerSchema = Joi.object({
   username: Joi.string().min(3).required(),
-  password: Joi.string().min(6).required(),
+  password: Joi.string().min(8).required(),
   email: Joi.string().email().required(),
 });
 const loginSchema = Joi.object({
-  username: Joi.string().min(3).required(),
-  password: Joi.string().min(6).required(),
+  username: Joi.string().min().required(),
+  password: Joi.string().min().required(),
 });
 
 
@@ -32,7 +32,7 @@ function register(req, res){
 
     if (findUserByName(username)) {
         return res.status(400).json({message: 'User already exists'});
-    } // Checks to see if the user already exists
+    } // Checks if user exists already
 
 
     // Creates user and places them to the mock database
@@ -54,13 +54,26 @@ function login(req, res) {
     if (!user || user.password !== password) {
         return res.status(401).json({message: 'Invalid username or password'});
     }// Check password and if user exists
-
-
-    // Generate JWT token along with user ID & username
+ 
     const token = jwt.sign({id: user.id, username: user.username}, jwt_secret, {expiresIn: '1h'});
 
-
-    return res.status(200).json({message: 'Login successful', token}); // user is there para debug sa
+    return res.status(200).json({message: 'Login successful', token});
 }
 
-module.exports = {register, login};
+
+// GET /profile
+function getProfile(req, res){
+    const user = req.user;
+
+    const userData = findUserByName(user.username);
+    if (!userData) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({
+        id: userData.id,
+        username: userData.username,
+    });
+}
+
+module.exports = {register, login, getProfile};

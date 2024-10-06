@@ -1,13 +1,16 @@
 const jwt = require('jsonwebtoken');
 const jwt_secret = 'testKey';
 
-// Function for verifying the JWT token
+// Function for verifying the token
 function authenticateToken(req, res, next) {
+
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
-        return res.status(403).json({message: 'Token required'});
+        return res.status(403).json({message: 'Missing Token! Please provide'});
     }
 
     jwt.verify(token, jwt_secret, (err, user) => {
@@ -15,11 +18,10 @@ function authenticateToken(req, res, next) {
             return res.status(403).json({message: 'Invalid token'});
         }
 
-
-        // Debug purposes rani which displays the user.
         req.user = user;
         next();
     });
 }
+
 
 module.exports = {authenticateToken};

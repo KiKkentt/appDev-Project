@@ -7,7 +7,6 @@ const app = express();
 
 app.use(bodyParser.json());
 
-// User routes
 app.use('/user', userRoutes);
 
 const port = 3000;
